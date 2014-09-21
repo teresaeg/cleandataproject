@@ -23,13 +23,13 @@ y_data <- rbind(y_test, y_train)
 x_data <- rbind(x_test, x_train)
 subject_data <- rbind(subject_test, subject_train)
 
-# use the features data to name the variables in x_data (also STEP 4)
+# use the features data to name the variables in x_data (aka STEP 4)
 colnames(x_data) <- features[[2]]
 
 # add on the subject & activity data to create the whole data set
 total_data <- cbind(subject_data, y_data, x_data)
 
-# name the first two columns so we know what they are (also STEP 4)
+# name the first two columns so we know what they are (aka STEP 4)
 colnames(total_data)[1] <- "subject"
 colnames(total_data)[2] <- "activitynumber"
 
@@ -87,6 +87,10 @@ colnames(subset_data) <- gsub("()","", colnames(subset_data), fixed = T)
 colnames(subset_data) <- sub("^t", "time", colnames(subset_data))
 colnames(subset_data) <- sub("^f", "freq", colnames(subset_data))
 
+# We could make some of the abbreviations a bit clearer, but frankly
+# the variable names are already really long, so I'm going to leave
+# them as is, and just explain more in the codebook.
+
 # The video slides say to have the variables be all lower case,
 # So let's make them all lower case
 colnames(subset_data) <- tolower(colnames(subset_data))
@@ -100,7 +104,10 @@ colnames(subset_data) <- tolower(colnames(subset_data))
 
 # We will take our subset_data, organize it by subject and activitynumber, and
 # then take the mean of all the other columns.
-new_data_set <- ddply(subset_data, .(subject, activitynumber), numcolwise(mean))
+new_data_set <- ddply(subset_data, .(subject, activityname), numcolwise(mean))
+
+# Get rid of the activitynumber variable since we don't need that in a tidy data set
+new_data_set <- new_data_set[c(-3)]
 
 # Last but not least, export the new data set!
 write.table(new_data_set, "new_data_set.txt", sep="\t",  row.name=FALSE) 
